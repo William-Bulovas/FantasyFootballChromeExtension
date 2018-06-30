@@ -1,0 +1,15 @@
+{
+  "name": "Fantasy Draft Extension",
+  "version": "1.0",
+  "description":
+    "Extension to show Boris Chen and Beersheet values in Mock Draft",
+  "content_scripts": [
+    {
+      "matches": ["https://football.fantasysports.yahoo.com/draftclient/*"],
+      "js": ["fantasy_script.js"],
+      "run_at": "document_end"      
+    }
+  ],
+  "permissions": ["storage"],
+  "manifest_version": 2
+}
