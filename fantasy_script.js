@@ -50,11 +50,9 @@ function addBorisChenToTable(element, value) {
 }
 
 function getValue(element, borischenRankings) {
-  let name = element.children[2].children[2].innerText;
-  if (element.children[2].children.length == 5) {
-    console.log(element)
-    name = element.children[2].children[3].innerText;
-  }
+  const name = getElementByXpath(
+    '//*[contains(@data-id, "' + element.getAttribute('data-id') + '")]/td[3]/span[2]'
+  ).innerText;
   for (let i = 0; i < borischenRankings.length; i++) {
     const ranking = borischenRankings[i];
     if (name.toLowerCase() == ranking.name.toLowerCase()) {
