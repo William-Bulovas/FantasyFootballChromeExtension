@@ -6,8 +6,7 @@
   "content_scripts": [
     {
       "matches": ["https://football.fantasysports.yahoo.com/draftclient/*"],
-      "js": ["fantasy_script.js"],
-      "run_at": "document_end"      
+      "js": ["fantasy_script.js"]
     }
   ],
   "permissions": ["storage"],

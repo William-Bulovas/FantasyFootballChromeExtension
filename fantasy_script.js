@@ -22,6 +22,26 @@ function constructBorisChenRequest() {
   );
 }
 
+function isElementInViewport(el) {
+  //special bonus for those using jQuery
+  if (typeof jQuery === "function" && el instanceof jQuery) {
+    el = el[0];
+  }
+
+  var rect = el.getBoundingClientRect();
+
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <=
+      (window.innerHeight ||
+        document.documentElement.clientHeight) /*or $(window).height() */ &&
+    rect.right <=
+      (window.innerWidth ||
+        document.documentElement.clientWidth) /*or $(window).width() */
+  );
+}
+
 function addBorisChenToTable(element, value) {
   let borischenTable = document.createElement("td");
   borischenTable.innerHTML = value;
@@ -30,10 +50,14 @@ function addBorisChenToTable(element, value) {
 }
 
 function getValue(element, borischenRankings) {
-  const name = element.children[2].children[2].innerText;
+  let name = element.children[2].children[2].innerText;
+  if (element.children[2].children.length == 5) {
+    console.log(element)
+    name = element.children[2].children[3].innerText;
+  }
   for (let i = 0; i < borischenRankings.length; i++) {
     const ranking = borischenRankings[i];
-    if (name == ranking.name) {
+    if (name.toLowerCase() == ranking.name.toLowerCase()) {
       return ranking.rank;
     }
   }
@@ -45,7 +69,10 @@ function addToTable(table, borischenRankings) {
   for (let i = 0; i < table.children.length; i++) {
     const tableElement = table.children[i];
 
+    if (!isElementInViewport(tableElement)) return;
+
     removeLastChild(tableElement);
+
     const borisChenValue = getValue(tableElement, borischenRankings);
     addBorisChenToTable(tableElement, borisChenValue);
   }
