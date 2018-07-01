@@ -17,9 +17,7 @@ function getElementByXpath(path) {
 }
 
 function constructBorisChenRequest() {
-  return new Request(
-    "https://jayzheng-ff-api.herokuapp.com/rankings?format=standard"
-  );
+  return new Request("https://francophone-toonie-97015.herokuapp.com/");
 }
 
 function isElementInViewport(el) {
@@ -50,30 +48,25 @@ function addBorisChenToTable(element, value) {
 }
 
 function getValue(element, borischenRankings) {
-  const name = getElementByXpath(
-    '//*[contains(@data-id, "' + element.getAttribute('data-id') + '")]/td[3]/span[2]'
-  ).innerText;
-  for (let i = 0; i < borischenRankings.length; i++) {
-    const ranking = borischenRankings[i];
-    if (name.toLowerCase() == ranking.name.toLowerCase()) {
-      return ranking.rank;
-    }
-  }
+  const name = element
+    .getElementsByClassName("Ta-start")[0]
+    .getElementsByTagName("span")[1].innerText;
 
-  return "N/A";
+  if (!borischenRankings.hasOwnProperty(name)) return "";
+
+  return borischenRankings[name];
 }
 
-function addToTable(table, borischenRankings) {
-  for (let i = 0; i < table.children.length; i++) {
+function addToTable(table, borischenRankings) { 
+  for (let i = 0; i < 300; i++) {
     const tableElement = table.children[i];
-
-    if (!isElementInViewport(tableElement)) return;
 
     removeLastChild(tableElement);
 
     const borisChenValue = getValue(tableElement, borischenRankings);
+
     addBorisChenToTable(tableElement, borisChenValue);
-  }
+  }  
 }
 
 function addHtml(borischenRankings) {
@@ -97,6 +90,22 @@ function addHtml(borischenRankings) {
     '//*[contains(@class, "ys-playertable ys-hidedrafted Cur-p Fz-s M-0 Condensed")]/tbody'
   );
   addToTable(tableBody, borischenRankings);
+  let last_known_scroll_position = 0;
+  let ticking = false;
+
+  document.addEventListener("scroll", function(e) {
+    last_known_scroll_position = window.scrollY;
+
+    if (!ticking) {
+      window.requestAnimationFrame(function() {
+        console.log("here");
+        addToTable(tableBody, borischenRankings);
+        ticking = false;
+      });
+
+      ticking = true;
+    }
+  });
 }
 
 function waitForElementToDisplay(time, borischenRankings) {
@@ -109,7 +118,22 @@ function waitForElementToDisplay(time, borischenRankings) {
     }, time);
   }
 }
+let last_known_scroll_position = 0;
+let ticking = false;
+
+window.addEventListener("scroll", function(e) {
+  last_known_scroll_position = window.scrollY;
+
+  if (!ticking) {
+    window.requestAnimationFrame(function() {
+      console.log("here");
+      ticking = false;
+    });
+
+    ticking = true;
+  }
+});
 
 fetch(constructBorisChenRequest())
   .then(response => response.json())
-  .then(json => waitForElementToDisplay(100, json.rankings));
+  .then(json => waitForElementToDisplay(100, json));
